@@ -1,11 +1,11 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
-import ChartIcon from "../icons/ChartIcon";
-import AddIcon from "../icons/AddIcon";
-import { IconButton } from "../Utils/IconButton";
 import { Colors, NavEnum } from "../../const";
+import AddIcon from "../icons/AddIcon";
+import ChartIcon from "../icons/ChartIcon";
+import { IconButton } from "../Utils/IconButton";
 
-export const IndicatorButton = ({ title, value, navigation, navigateTo }) => {
+export const IndicatorButton = ({ title, value, navigation }) => {
 	return (
 		<Shadow
 			style={{ width: "100%" }}
@@ -14,7 +14,7 @@ export const IndicatorButton = ({ title, value, navigation, navigateTo }) => {
 			containerViewStyle={{ marginVertical: 20 }}
 			radius={10}
 		>
-			<Pressable style={styles.view} onPress={() => navigation.navigate(navigateTo)}>
+			<TouchableOpacity style={styles.view} onPress={() => navigation.navigate(NavEnum.Indicator, { title })}>
 				<View style={styles.container}>
 					<Text style={styles.text}>{title}</Text>
 					<View>
@@ -23,10 +23,10 @@ export const IndicatorButton = ({ title, value, navigation, navigateTo }) => {
 					</View>
 				</View>
 				<View style={styles.buttons}>
-					<IconButton icon={<ChartIcon />} onPress={() => navigation.navigate(NavEnum.Chart)}/>
+					<IconButton icon={<ChartIcon />} onPress={() => navigation.navigate(NavEnum.Chart)} />
 					<IconButton icon={<AddIcon />} />
 				</View>
-			</Pressable>
+			</TouchableOpacity>
 		</Shadow>
 	);
 };
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 		flexDirection: "column",
 		gap: 5,
 		alignItems: "flex-start",
-		justifyContent: "center"
+		justifyContent: "center",
 	},
 	text: {
 		fontSize: 19,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
 	last: {
 		fontSize: 16,
 		fontWeight: "bold",
-		color: "#00a0ff",
+		color: Colors.blue,
 	},
 	prev: {
 		fontSize: 13,

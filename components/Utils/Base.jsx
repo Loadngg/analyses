@@ -1,13 +1,8 @@
-import { StatusBar, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Colors } from "../../const";
 
 export const Base = ({ children }) => {
-	return (
-		<View style={styles.baseView}>
-			{children}
-			<StatusBar theme="auto" />
-		</View>
-	);
+	return <View style={styles.baseView}>{children}</View>;
 };
 
 const styles = StyleSheet.create({

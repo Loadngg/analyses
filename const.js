@@ -10,4 +10,5 @@ export const Colors = {
 	text: "#212529",
 	background: "#E9ECEF",
 	shadow: "rgba(0, 0, 0, 0.06)",
+	blue: "#00a0ff",
 };

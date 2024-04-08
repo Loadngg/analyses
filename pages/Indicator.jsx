@@ -1,8 +1,17 @@
 import { Button, FlatList } from "react-native";
 import { IndicatorItem } from "../components/Indicator/IndicatorItem";
 import { Base } from "../components/Utils/Base";
+import { useEffect } from "react";
 
-export const Indicator = () => {
+export const Indicator = ({ route, navigation }) => {
+	const { title } = route.params;
+
+	useEffect(() => {
+		navigation.setOptions({
+			title,
+		});
+	}, []);
+
 	return (
 		<Base>
 			<FlatList
