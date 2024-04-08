@@ -1,6 +1,7 @@
 export const NavEnum = {
 	Home: "Главная",
 	Indicator: "Показатель",
+	Chart: "График",
 };
 
 export const Colors = {

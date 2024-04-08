@@ -5,6 +5,7 @@ import ChartIcon from "./components/icons/ChartIcon";
 import { Colors, NavEnum } from "./const";
 import { Home } from "./pages/Home";
 import { Indicator } from "./pages/Indicator";
+import { Chart } from "./pages/Chart";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,12 +22,12 @@ export default function App() {
 							headerRight: () => (
 								<IconButton
 									icon={<ChartIcon />}
-									// color={{ backgroundColor: "#bcd7ff" }}
-									onPress={() => navigation.navigate(NavEnum.Indicator)}
+									onPress={() => navigation.navigate(NavEnum.Chart)}
 								/>
 							),
 						})}
 					/>
+					<Stack.Screen name={NavEnum.Chart} component={Chart} />
 				</Stack.Group>
 			</Stack.Navigator>
 		</NavigationContainer>
