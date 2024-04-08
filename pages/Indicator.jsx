@@ -1,6 +1,6 @@
-import { Base } from "../components/Base";
 import { Button, FlatList } from "react-native";
-import { IndicatorItem } from "../components/IndicatorItem";
+import { IndicatorItem } from "../components/Indicator/IndicatorItem";
+import { Base } from "../components/Utils/Base";
 
 export const Indicator = () => {
 	return (
