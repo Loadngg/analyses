@@ -5,7 +5,7 @@ import AddIcon from "../icons/AddIcon";
 import ChartIcon from "../icons/ChartIcon";
 import { IconButton } from "../Utils/IconButton";
 
-export const IndicatorButton = ({ title, value, navigation }) => {
+export const IndicatorButton = ({ title, value, navigation, onLongPress }) => {
 	return (
 		<Shadow
 			style={{ width: "100%" }}
@@ -14,7 +14,11 @@ export const IndicatorButton = ({ title, value, navigation }) => {
 			containerViewStyle={{ marginVertical: 20 }}
 			radius={10}
 		>
-			<TouchableOpacity style={styles.view} onPress={() => navigation.navigate(NavEnum.Indicator, { title })}>
+			<TouchableOpacity
+				onLongPress={onLongPress}
+				style={styles.view}
+				onPress={() => navigation.navigate(NavEnum.Indicator, { title })}
+			>
 				<View style={styles.container}>
 					<Text style={styles.text}>{title}</Text>
 					<View>
@@ -23,7 +27,7 @@ export const IndicatorButton = ({ title, value, navigation }) => {
 					</View>
 				</View>
 				<View style={styles.buttons}>
-					<IconButton icon={<ChartIcon />} onPress={() => navigation.navigate(NavEnum.Chart)} />
+					<IconButton icon={<ChartIcon />} onPress={() => navigation.navigate(NavEnum.Chart, { title })} />
 					<IconButton icon={<AddIcon />} />
 				</View>
 			</TouchableOpacity>

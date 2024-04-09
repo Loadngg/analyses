@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Shadow } from "react-native-shadow-2";
 import { Colors } from "../../const";
 
-export const IndicatorItem = ({ date, value }) => {
+export const IndicatorItem = ({ date, value, onLongPress }) => {
 	return (
 		<Shadow
 			style={{ width: "100%" }}
@@ -11,10 +11,10 @@ export const IndicatorItem = ({ date, value }) => {
 			containerViewStyle={{ marginVertical: 20 }}
 			radius={10}
 		>
-			<View style={styles.view}>
+			<TouchableOpacity onLongPress={onLongPress} style={styles.view}>
 				<Text style={styles.date}>{date}:</Text>
 				<Text style={styles.value}>{value}</Text>
-			</View>
+			</TouchableOpacity>
 		</Shadow>
 	);
 };

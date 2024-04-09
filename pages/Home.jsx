@@ -1,21 +1,9 @@
 import { useState } from "react";
-import {
-	Button,
-	FlatList,
-	Modal,
-	StyleSheet,
-	Text,
-	Pressable,
-	View,
-	TouchableOpacity,
-	TouchableWithoutFeedback,
-	Alert,
-	TextInput,
-} from "react-native";
-import { Base } from "../components/Utils/Base";
-import { Colors } from "../const";
+import { Alert, FlatList, Modal, StyleSheet, TextInput, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
+import { Base } from "../components/Utils/Base";
 import { TextButton } from "../components/Utils/TextButton";
+import { Colors } from "../const";
 
 import { IndicatorButton } from "../components/Home/IndicatorButton";
 
@@ -41,6 +29,30 @@ export const Home = ({ navigation }) => {
 		if (existingObject) return Alert.alert("Ошибка", "Такая категория уже существует");
 		setData([...data, { key: indicatorTitle, value: "" }]);
 		hideModal();
+	};
+
+	const deleteIndicator = (key) => {
+		const updatedData = data.filter((item) => item.key !== key);
+		setData(updatedData);
+	};
+
+	const handleLongPress = (key) => {
+		Alert.alert(
+			"Удалить",
+			"Вы уверены, что хотите удалить эту категорию?",
+			[
+				{
+					text: "Отмена",
+					style: "cancel",
+				},
+				{
+					text: "Удалить",
+					style: "destructive",
+					onPress: () => deleteIndicator(key),
+				},
+			],
+			{ cancelable: true }
+		);
 	};
 
 	return (
@@ -76,7 +88,12 @@ export const Home = ({ navigation }) => {
 				contentContainerStyle={{ gap: 15 }}
 				data={data}
 				renderItem={({ item }) => (
-					<IndicatorButton title={item.key} value={item.value} navigation={navigation} />
+					<IndicatorButton
+						onLongPress={() => handleLongPress(item.key)}
+						title={item.key}
+						value={item.value}
+						navigation={navigation}
+					/>
 				)}
 			/>
 			<TextButton text={"Добавить"} onPress={() => setModalVisible(true)} />
