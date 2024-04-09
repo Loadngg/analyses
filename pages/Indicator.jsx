@@ -10,7 +10,7 @@ import { Colors, NavEnum } from "../const";
 import moment from "moment";
 
 export const Indicator = ({ route, navigation }) => {
-	const { title } = route.params;
+	const { title, unit } = route.params;
 
 	useEffect(() => {
 		navigation.setOptions({
@@ -22,19 +22,19 @@ export const Indicator = ({ route, navigation }) => {
 	}, []);
 
 	const [data, setData] = useState([
-		{ key: "27/03/24 10:00", value: "45.7мг" },
-		{ key: "28/03/24 10:00", value: "45.7мг" },
-		{ key: "29/03/24 10:00", value: "45.7мг" },
-		{ key: "30/03/24 10:00", value: "45.7мг" },
-		{ key: "31/03/24 10:00", value: "45.7мг" },
-		{ key: "01/04/24 10:00", value: "45.7мг" },
-		{ key: "02/04/24 10:00", value: "45.7мг" },
-		{ key: "03/04/24 10:00", value: "45.7мг" },
-		{ key: "04/04/24 10:00", value: "45.7мг" },
-		{ key: "05/04/24 10:00", value: "45.7мг" },
-		{ key: "06/04/24 10:00", value: "45.7мг" },
-		{ key: "07/04/24 10:00", value: "45.7мг" },
-		{ key: "08/04/24 10:00", value: "45.7мг" },
+		{ key: "27/03/24 10:00", value: "45.7" },
+		{ key: "28/03/24 10:00", value: "45.7" },
+		{ key: "29/03/24 10:00", value: "45.7" },
+		{ key: "30/03/24 10:00", value: "45.7" },
+		{ key: "31/03/24 10:00", value: "45.7" },
+		{ key: "01/04/24 10:00", value: "45.7" },
+		{ key: "02/04/24 10:00", value: "45.7" },
+		{ key: "03/04/24 10:00", value: "45.7" },
+		{ key: "04/04/24 10:00", value: "45.7" },
+		{ key: "05/04/24 10:00", value: "45.7" },
+		{ key: "06/04/24 10:00", value: "45.7" },
+		{ key: "07/04/24 10:00", value: "45.7" },
+		{ key: "08/04/24 10:00", value: "45.7" },
 	]);
 
 	const [modalVisible, setModalVisible] = useState(false);
@@ -104,7 +104,8 @@ export const Indicator = ({ route, navigation }) => {
 								style={styles.modalInput}
 								onChangeText={setIndicatorItemValue}
 								value={indicatorItemValue}
-								placeholder="Название категории"
+								keyboardType="numeric"
+								placeholder="Значение"
 							/>
 							<TextButton text={"Добавить"} onPress={addIndicatorItem} />
 						</View>
@@ -115,7 +116,11 @@ export const Indicator = ({ route, navigation }) => {
 				contentContainerStyle={{ gap: 15 }}
 				data={sortedData}
 				renderItem={({ item }) => (
-					<IndicatorItem onLongPress={() => handleLongPress(item.key)} date={item.key} value={item.value} />
+					<IndicatorItem
+						onLongPress={() => handleLongPress(item.key)}
+						date={item.key}
+						value={item.value + " " + unit}
+					/>
 				)}
 			/>
 			<TextButton text={"Добавить"} onPress={() => setModalVisible(true)} />

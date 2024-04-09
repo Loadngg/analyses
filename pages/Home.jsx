@@ -9,17 +9,23 @@ import { IndicatorButton } from "../components/Home/IndicatorButton";
 
 export const Home = ({ navigation }) => {
 	const [data, setData] = useState([
-		{ key: "Белок", value: "50мг" },
-		{ key: "Холестерин", value: "50мг" },
-		{ key: "Сахар", value: "50мг" },
-		{ key: "Вес", value: "50мг" },
+		{ key: "Белок", value: "50", unit: "мг", min: "0", max: "100" },
+		{ key: "Холестерин", value: "50", unit: "мг", min: "0", max: "100" },
+		{ key: "Сахар", value: "50", unit: "мг", min: "0", max: "100" },
+		{ key: "Вес", value: "50", unit: "мг", min: "0", max: "100" },
 	]);
 
 	const [modalVisible, setModalVisible] = useState(false);
 	const [indicatorTitle, setIndicatorTitle] = useState("");
+	const [unit, setUnit] = useState("");
+	const [min, setMin] = useState("");
+	const [max, setMax] = useState("");
 
 	const hideModal = () => {
 		setIndicatorTitle("");
+		setUnit("");
+		setMin("");
+		setMax("");
 		setModalVisible(false);
 	};
 
@@ -27,7 +33,7 @@ export const Home = ({ navigation }) => {
 		if (indicatorTitle.length === 0) return Alert.alert("Ошибка", "Вы не ввели название категории");
 		const existingObject = data.find((obj) => obj.key === indicatorTitle);
 		if (existingObject) return Alert.alert("Ошибка", "Такая категория уже существует");
-		setData([...data, { key: indicatorTitle, value: "" }]);
+		setData([...data, { key: indicatorTitle, value: "", unit: unit, min: min, max: max }]);
 		hideModal();
 	};
 
@@ -78,6 +84,26 @@ export const Home = ({ navigation }) => {
 								value={indicatorTitle}
 								placeholder="Название категории"
 							/>
+							<TextInput
+								style={styles.modalInput}
+								onChangeText={setUnit}
+								value={unit}
+								placeholder="Единица измерения"
+							/>
+							<TextInput
+								style={styles.modalInput}
+								onChangeText={setMin}
+								value={min}
+								keyboardType="numeric"
+								placeholder="Норма: минимум"
+							/>
+							<TextInput
+								style={styles.modalInput}
+								onChangeText={setMax}
+								value={max}
+								keyboardType="numeric"
+								placeholder="Норма: максимум"
+							/>
 							<TextButton text={"Добавить"} onPress={addIndicator} />
 						</View>
 					</Shadow>
@@ -92,6 +118,7 @@ export const Home = ({ navigation }) => {
 						onLongPress={() => handleLongPress(item.key)}
 						title={item.key}
 						value={item.value}
+						unit={item.unit}
 						navigation={navigation}
 					/>
 				)}
