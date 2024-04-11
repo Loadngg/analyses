@@ -1,3 +1,4 @@
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, Modal, StyleSheet, TextInput, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
@@ -7,19 +8,9 @@ import { Base } from "../components/Utils/Base";
 import { IconButton } from "../components/Utils/IconButton";
 import { TextButton } from "../components/Utils/TextButton";
 import { Colors, NavEnum } from "../const";
-import moment from "moment";
 
 export const Indicator = ({ route, navigation }) => {
 	const { title, unit } = route.params;
-
-	useEffect(() => {
-		navigation.setOptions({
-			title,
-			headerRight: () => (
-				<IconButton icon={<ChartIcon />} onPress={() => navigation.navigate(NavEnum.Chart, { title })} />
-			),
-		});
-	}, []);
 
 	const [data, setData] = useState([
 		{ key: "27/03/24 10:00", value: "45.7" },
@@ -36,6 +27,18 @@ export const Indicator = ({ route, navigation }) => {
 		{ key: "07/04/24 10:00", value: "45.7" },
 		{ key: "08/04/24 10:00", value: "45.7" },
 	]);
+
+	useEffect(() => {
+		navigation.setOptions({
+			title,
+			headerRight: () => (
+				<IconButton
+					icon={<ChartIcon />}
+					onPress={() => navigation.navigate(NavEnum.Chart, { data: data, title: title })}
+				/>
+			),
+		});
+	}, []);
 
 	const [modalVisible, setModalVisible] = useState(false);
 	const [indicatorItemValue, setIndicatorItemValue] = useState("");

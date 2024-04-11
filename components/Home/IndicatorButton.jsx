@@ -31,7 +31,12 @@ export const IndicatorButton = ({ title, value, unit, navigation, onLongPress })
 					</View>
 				</View>
 				<View style={styles.buttons}>
-					<IconButton icon={<ChartIcon />} onPress={() => navigation.navigate(NavEnum.Chart, { title })} />
+					<IconButton
+						icon={<ChartIcon />}
+						onPress={() =>
+							navigation.navigate(NavEnum.Chart, { data: [{ key: "123", value: "1" }], title: title })
+						}
+					/>
 					<IconButton icon={<AddIcon />} />
 				</View>
 			</TouchableOpacity>

@@ -4,7 +4,6 @@ import { Shadow } from "react-native-shadow-2";
 import { Base } from "../components/Utils/Base";
 import { TextButton } from "../components/Utils/TextButton";
 import { Colors } from "../const";
-
 import { IndicatorButton } from "../components/Home/IndicatorButton";
 
 export const Home = ({ navigation }) => {
