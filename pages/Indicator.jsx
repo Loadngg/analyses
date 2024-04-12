@@ -1,6 +1,6 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { Alert, FlatList, Modal, StyleSheet, TextInput, View } from "react-native";
+import { Alert, FlatList, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
 import ChartIcon from "../components/icons/ChartIcon";
 import { IndicatorItem } from "../components/Indicator/IndicatorItem";
@@ -8,25 +8,23 @@ import { Base } from "../components/Utils/Base";
 import { IconButton } from "../components/Utils/IconButton";
 import { TextButton } from "../components/Utils/TextButton";
 import { Colors, NavEnum } from "../const";
+import { setIndicatorsItems } from "../storage/storage";
 
 export const Indicator = ({ route, navigation }) => {
-	const { title, unit } = route.params;
+	const { title, values, unit, openModal } = route.params;
 
-	const [data, setData] = useState([
-		{ key: "27/03/24 10:00", value: "45.7" },
-		{ key: "28/03/24 10:00", value: "45.7" },
-		{ key: "29/03/24 10:00", value: "45.7" },
-		{ key: "30/03/24 10:00", value: "45.7" },
-		{ key: "31/03/24 10:00", value: "45.7" },
-		{ key: "01/04/24 10:00", value: "45.7" },
-		{ key: "02/04/24 10:00", value: "45.7" },
-		{ key: "03/04/24 10:00", value: "45.7" },
-		{ key: "04/04/24 10:00", value: "45.7" },
-		{ key: "05/04/24 10:00", value: "45.7" },
-		{ key: "06/04/24 10:00", value: "45.7" },
-		{ key: "07/04/24 10:00", value: "45.7" },
-		{ key: "08/04/24 10:00", value: "45.7" },
-	]);
+	const [data, setData] = useState(values);
+	const setIndicatorsItemData = async (newData) => {
+		newData = newData.sort((a, b) => {
+			const [dayA, monthA, yearA, hourA, minuteA, secondA] = a.key.split(/[\/\s:]/);
+			const [dayB, monthB, yearB, hourB, minuteB, secondB] = b.key.split(/[\/\s:]/);
+			const dateA = new Date(yearA, monthA - 1, dayA, hourA, minuteA, secondA);
+			const dateB = new Date(yearB, monthB - 1, dayB, hourB, minuteB, secondB);
+			return dateB - dateA;
+		});
+		setData(newData);
+		await setIndicatorsItems(newData);
+	};
 
 	useEffect(() => {
 		navigation.setOptions({
@@ -34,13 +32,18 @@ export const Indicator = ({ route, navigation }) => {
 			headerRight: () => (
 				<IconButton
 					icon={<ChartIcon />}
-					onPress={() => navigation.navigate(NavEnum.Chart, { data: data, title: title })}
+					onPress={() =>
+						navigation.navigate(NavEnum.Chart, {
+							data: data.filter((value) => value.title === title),
+							title: title,
+						})
+					}
 				/>
 			),
 		});
 	}, []);
 
-	const [modalVisible, setModalVisible] = useState(false);
+	const [modalVisible, setModalVisible] = useState(openModal);
 	const [indicatorItemValue, setIndicatorItemValue] = useState("");
 
 	const hideModal = () => {
@@ -50,13 +53,18 @@ export const Indicator = ({ route, navigation }) => {
 
 	const addIndicatorItem = () => {
 		if (indicatorItemValue.length === 0) return Alert.alert("Ошибка", "Вы не ввели значение");
-		setData([...data, { key: moment().format("DD/MM/YY HH:mm"), value: indicatorItemValue }]);
+		setIndicatorsItemData([
+			...data,
+			{ title: title, key: moment().format("DD/MM/YY HH:mm:ss"), value: indicatorItemValue },
+		]);
 		hideModal();
+		if (!openModal) return;
+		navigation.navigate(NavEnum.Home);
 	};
 
 	const deleteIndicatorItem = (key) => {
-		const updatedData = data.filter((item) => item.key !== key);
-		setData(updatedData);
+		const updatedData = data.filter((item) => item.key !== key && item.title !== title);
+		setIndicatorsItemData(updatedData);
 	};
 
 	const handleLongPress = (key) => {
@@ -77,14 +85,6 @@ export const Indicator = ({ route, navigation }) => {
 			{ cancelable: true }
 		);
 	};
-
-	const sortedData = data.sort((a, b) => {
-		const [dayA, monthA, yearA, hourA, minuteA] = a.key.split(/[\/\s:]/);
-		const [dayB, monthB, yearB, hourB, minuteB] = b.key.split(/[\/\s:]/);
-		const dateA = new Date(yearA, monthA - 1, dayA, hourA, minuteA);
-		const dateB = new Date(yearB, monthB - 1, dayB, hourB, minuteB);
-		return dateB - dateA;
-	});
 
 	return (
 		<Base>
@@ -115,17 +115,22 @@ export const Indicator = ({ route, navigation }) => {
 					</Shadow>
 				</View>
 			</Modal>
-			<FlatList
-				contentContainerStyle={{ gap: 15 }}
-				data={sortedData}
-				renderItem={({ item }) => (
-					<IndicatorItem
-						onLongPress={() => handleLongPress(item.key)}
-						date={item.key}
-						value={item.value + " " + unit}
-					/>
-				)}
-			/>
+
+			{data.length !== 0 ? (
+				<FlatList
+					contentContainerStyle={{ gap: 15 }}
+					data={data.filter((value) => value.title === title)}
+					renderItem={({ item }) => (
+						<IndicatorItem
+							onLongPress={() => handleLongPress(item.key)}
+							date={moment().format("DD/MM/YY HH:mm")}
+							value={item.value + " " + unit}
+						/>
+					)}
+				/>
+			) : (
+				<Text>Записей не найдено. Создайте новую.</Text>
+			)}
 			<TextButton text={"Добавить"} onPress={() => setModalVisible(true)} />
 		</Base>
 	);

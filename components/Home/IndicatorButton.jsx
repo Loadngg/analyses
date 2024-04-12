@@ -5,7 +5,8 @@ import AddIcon from "../icons/AddIcon";
 import ChartIcon from "../icons/ChartIcon";
 import { IconButton } from "../Utils/IconButton";
 
-export const IndicatorButton = ({ title, value, unit, navigation, onLongPress }) => {
+export const IndicatorButton = ({ title, values, unit, navigation, onLongPress }) => {
+	const data = values.filter((value) => value.title === title);
 	return (
 		<Shadow
 			style={{ width: "100%" }}
@@ -17,27 +18,34 @@ export const IndicatorButton = ({ title, value, unit, navigation, onLongPress })
 			<TouchableOpacity
 				onLongPress={onLongPress}
 				style={styles.view}
-				onPress={() => navigation.navigate(NavEnum.Indicator, { title, unit })}
+				onPress={() => navigation.navigate(NavEnum.Indicator, { title, values, unit, openModal: false })}
 			>
 				<View style={styles.container}>
 					<Text style={styles.text}>{title}</Text>
-					<View>
-						<Text style={[styles.value, styles.last]}>
-							{value} {unit}
-						</Text>
-						<Text style={[styles.value, styles.prev]}>
-							{value} {unit}
-						</Text>
-					</View>
+					{data.length !== 0 ? (
+						<View>
+							<Text style={[styles.value, styles.last]}>
+								{data[0].value} {unit}
+							</Text>
+							{data.length > 1 ? (
+								<Text style={[styles.value, styles.prev]}>{data[1].value + " " + unit}</Text>
+							) : (
+								<></>
+							)}
+						</View>
+					) : (
+						<Text style={[styles.value, styles.last]}>Записей нет</Text>
+					)}
 				</View>
 				<View style={styles.buttons}>
 					<IconButton
 						icon={<ChartIcon />}
-						onPress={() =>
-							navigation.navigate(NavEnum.Chart, { data: [{ key: "123", value: "1" }], title: title })
-						}
+						onPress={() => navigation.navigate(NavEnum.Chart, { data: data, title: title })}
 					/>
-					<IconButton icon={<AddIcon />} />
+					<IconButton
+						icon={<AddIcon />}
+						onPress={() => navigation.navigate(NavEnum.Indicator, { title, values, unit, openModal: true })}
+					/>
 				</View>
 			</TouchableOpacity>
 		</Shadow>

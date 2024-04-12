@@ -1,18 +1,59 @@
-import { useState } from "react";
-import { Alert, FlatList, Modal, StyleSheet, TextInput, View } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { Alert, FlatList, Modal, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
+import { IndicatorButton } from "../components/Home/IndicatorButton";
 import { Base } from "../components/Utils/Base";
+import { Loading } from "../components/Utils/Loading";
 import { TextButton } from "../components/Utils/TextButton";
 import { Colors } from "../const";
-import { IndicatorButton } from "../components/Home/IndicatorButton";
+import { getIndicators, getIndicatorsItems, setIndicators, setIndicatorsItems } from "../storage/storage";
 
 export const Home = ({ navigation }) => {
-	const [data, setData] = useState([
-		{ key: "Белок", value: "50", unit: "мг", min: "0", max: "100" },
-		{ key: "Холестерин", value: "50", unit: "мг", min: "0", max: "100" },
-		{ key: "Сахар", value: "50", unit: "мг", min: "0", max: "100" },
-		{ key: "Вес", value: "50", unit: "мг", min: "0", max: "100" },
-	]);
+	const [data, setData] = useState([]);
+	const [indicatorValues, setIndicatorValues] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const isFocused = useIsFocused();
+
+	const setIndicatorsData = async (newData) => {
+		setData(newData);
+		await setIndicators(newData);
+	};
+
+	const setIndicatorsValuesData = async (newData) => {
+		setIndicatorValues(newData);
+		await setIndicatorsItems(newData);
+	};
+
+	const getData = async () => {
+		if (!isFocused) {
+			setIsLoading(false);
+			return;
+		}
+
+		setIsLoading(true);
+		const indicators = await getIndicators();
+		const unsortedValues = await getIndicatorsItems();
+
+		let values = [];
+		if (unsortedValues.length > 0)
+			values = unsortedValues.sort((a, b) => {
+				const [dayA, monthA, yearA, hourA, minuteA, secondA] = a.key.split(/[\/\s:]/);
+				const [dayB, monthB, yearB, hourB, minuteB, secondB] = b.key.split(/[\/\s:]/);
+				const dateA = new Date(yearA, monthA - 1, dayA, hourA, minuteA, secondA);
+				const dateB = new Date(yearB, monthB - 1, dayB, hourB, minuteB, secondB);
+				return dateB - dateA;
+			});
+		setData(indicators);
+		setIndicatorValues(values);
+		setIsLoading(false);
+
+		Alert.alert(JSON.stringify(values));
+	};
+
+	useEffect(() => {
+		getData();
+	}, [isFocused]);
 
 	const [modalVisible, setModalVisible] = useState(false);
 	const [indicatorTitle, setIndicatorTitle] = useState("");
@@ -32,13 +73,15 @@ export const Home = ({ navigation }) => {
 		if (indicatorTitle.length === 0) return Alert.alert("Ошибка", "Вы не ввели название категории");
 		const existingObject = data.find((obj) => obj.key === indicatorTitle);
 		if (existingObject) return Alert.alert("Ошибка", "Такая категория уже существует");
-		setData([...data, { key: indicatorTitle, value: "", unit: unit, min: min, max: max }]);
+		setIndicatorsData([...data, { key: indicatorTitle, unit: unit, min: min, max: max }]);
 		hideModal();
 	};
 
 	const deleteIndicator = (key) => {
 		const updatedData = data.filter((item) => item.key !== key);
-		setData(updatedData);
+		const updatedValues = indicatorValues.filter((item) => item.title !== key);
+		setIndicatorsData(updatedData);
+		setIndicatorsValuesData(updatedValues);
 	};
 
 	const handleLongPress = (key) => {
@@ -59,6 +102,10 @@ export const Home = ({ navigation }) => {
 			{ cancelable: true }
 		);
 	};
+
+	if (isLoading) {
+		return <Loading />;
+	}
 
 	return (
 		<Base>
@@ -109,19 +156,25 @@ export const Home = ({ navigation }) => {
 				</View>
 			</Modal>
 
-			<FlatList
-				contentContainerStyle={{ gap: 15 }}
-				data={data}
-				renderItem={({ item }) => (
-					<IndicatorButton
-						onLongPress={() => handleLongPress(item.key)}
-						title={item.key}
-						value={item.value}
-						unit={item.unit}
-						navigation={navigation}
-					/>
-				)}
-			/>
+			{data.length !== 0 ? (
+				<FlatList
+					refreshControl={<RefreshControl refreshing={isLoading} onRefresh={getData} />}
+					contentContainerStyle={{ gap: 15 }}
+					data={data}
+					renderItem={({ item }) => (
+						<IndicatorButton
+							onLongPress={() => handleLongPress(item.key)}
+							title={item.key}
+							values={indicatorValues}
+							unit={item.unit}
+							navigation={navigation}
+						/>
+					)}
+				/>
+			) : (
+				<Text>Категорий не найдено. Создайте новую.</Text>
+			)}
+
 			<TextButton text={"Добавить"} onPress={() => setModalVisible(true)} />
 		</Base>
 	);
