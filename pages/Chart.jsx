@@ -1,27 +1,58 @@
-import { useEffect } from "react";
-import { Dimensions } from "react-native";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { Dimensions, StatusBar } from "react-native";
 import { LineChart } from "react-native-chart-kit";
+import { Base } from "../components/Utils/Base";
+import { getIndicators } from "../storage/storage";
 
 export const ChartScreen = ({ route, navigation }) => {
 	const { data, title } = route.params;
+	const [dates, setDates] = useState([""]);
+	const [values, setValues] = useState([0]);
+	const [min, setMin] = useState([0]);
+	const [max, setMax] = useState([0]);
 
 	useEffect(() => {
+		const dates = data.map((item) => moment(item.key, "DD/MM/YY HH:mm:ss").format("DD/MM/YY"));
+		setDates(dates);
+
+		const values = data.map((item) => parseFloat(item.value));
+		setValues(values);
+
+		const fetchIndicators = async () => {
+			let res = await getIndicators();
+			res = res.find((item) => item.key === title);
+
+			const min = dates.map((_) => parseFloat(res.min));
+			setMin(min);
+
+			const max = dates.map((_) => parseFloat(res.max));
+			setMax(max);
+		};
+
+		fetchIndicators();
+
 		navigation.setOptions({
 			title: `Динамика: ${title}`,
 		});
 	}, []);
 
 	const chartData = {
-		labels: [data.map((item) => item.key)],
+		labels: dates,
 		datasets: [
 			{
-				data: [1, 8, 3, 4, 19, 6],
+				data: values,
+				strokeWidth: 2,
 			},
 			{
-				data: [6, 6, 6, 6, 6, 6],
+				data: min,
+				color: (opacity = 1) => `rgba(76, 187, 23, ${opacity})`,
+				strokeWidth: 3,
 			},
 			{
-				data: [30, 30, 30, 30, 30, 30],
+				data: max,
+				color: (opacity = 1) => `rgba(255, 43, 43, ${opacity})`,
+				strokeWidth: 3,
 			},
 		],
 	};
@@ -30,22 +61,27 @@ export const ChartScreen = ({ route, navigation }) => {
 		backgroundGradientFrom: "#ffffff",
 		backgroundGradientTo: "#ffffff",
 		color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+		style: {
+			borderRadius: 16,
+		},
 	};
 
-	const screenWidth = Dimensions.get("window").width;
-	const screenHeight = Dimensions.get("window").height;
+	const screenWidth = Dimensions.get("window").width - 30;
+	const screenHeight = Dimensions.get("window").height - StatusBar.currentHeight - 30;
 
 	return (
-		<LineChart
-			data={data}
-			width={screenWidth}
-			height={screenHeight}
-			chartConfig={chartConfig}
-			bezier
-			style={{
-				marginVertical: 8,
-				borderRadius: 16,
-			}}
-		/>
+		<Base>
+			<LineChart
+				data={chartData}
+				width={screenWidth}
+				height={screenHeight}
+				chartConfig={chartConfig}
+				withShadow={false}
+				bezier
+				style={{
+					borderRadius: 16,
+				}}
+			/>
+		</Base>
 	);
 };

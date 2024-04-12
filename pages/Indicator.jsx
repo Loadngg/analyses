@@ -53,6 +53,12 @@ export const Indicator = ({ route, navigation }) => {
 
 	const addIndicatorItem = () => {
 		if (indicatorItemValue.length === 0) return Alert.alert("Ошибка", "Вы не ввели значение");
+		const regex = /^\d+(?:\.\d+)?$/;
+		if (!regex.test(indicatorItemValue))
+			return Alert.alert(
+				"Ошибка",
+				"Значение может содержать только целые значения, либо должны быть цифры до запятой и после"
+			);
 		setIndicatorsItemData([
 			...data,
 			{ title: title, key: moment().format("DD/MM/YY HH:mm:ss"), value: indicatorItemValue },
@@ -63,14 +69,14 @@ export const Indicator = ({ route, navigation }) => {
 	};
 
 	const deleteIndicatorItem = (key) => {
-		const updatedData = data.filter((item) => item.key !== key && item.title !== title);
+		const updatedData = data.filter((item) => item.key !== key || item.title !== title);
 		setIndicatorsItemData(updatedData);
 	};
 
 	const handleLongPress = (key) => {
 		Alert.alert(
 			"Удалить",
-			"Вы уверены, что хотите удалить эту запись?",
+			`Вы уверены, что хотите удалить эту запись? ${key} ${title}`,
 			[
 				{
 					text: "Отмена",
@@ -123,7 +129,7 @@ export const Indicator = ({ route, navigation }) => {
 					renderItem={({ item }) => (
 						<IndicatorItem
 							onLongPress={() => handleLongPress(item.key)}
-							date={moment().format("DD/MM/YY HH:mm")}
+							date={moment(item.key, "DD/MM/YY HH:mm:ss").format("DD/MM/YY")}
 							value={item.value + " " + unit}
 						/>
 					)}
