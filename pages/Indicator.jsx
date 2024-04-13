@@ -1,3 +1,4 @@
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, Modal, StyleSheet, Text, TextInput, View } from "react-native";
@@ -14,6 +15,7 @@ export const Indicator = ({ route, navigation }) => {
 	const { title, values, unit, openModal } = route.params;
 
 	const [data, setData] = useState(values);
+	const [date, setDate] = useState(new Date());
 	const setIndicatorsItemData = async (newData) => {
 		newData = newData.sort((a, b) => {
 			const [dayA, monthA, yearA, hourA, minuteA, secondA] = a.key.split(/[\/\s:]/);
@@ -61,7 +63,7 @@ export const Indicator = ({ route, navigation }) => {
 			);
 		setIndicatorsItemData([
 			...data,
-			{ title: title, key: moment().format("DD/MM/YY HH:mm:ss"), value: indicatorItemValue },
+			{ title: title, key: moment(date).format("DD/MM/YY HH:mm:ss"), value: indicatorItemValue },
 		]);
 		hideModal();
 		if (!openModal) return;
@@ -92,6 +94,17 @@ export const Indicator = ({ route, navigation }) => {
 		);
 	};
 
+	const showDatepicker = () => {
+		DateTimePickerAndroid.open({
+			value: date,
+			onChange: (_, selectedDate) => {
+				setDate(selectedDate);
+			},
+			mode: "date",
+			is24Hour: true,
+		});
+	};
+
 	return (
 		<Base>
 			<Modal
@@ -109,6 +122,8 @@ export const Indicator = ({ route, navigation }) => {
 						radius={10}
 					>
 						<View style={styles.modalView}>
+							<Text style={styles.modalDate}>{moment(date).format("DD/MM/YY")}</Text>
+							<TextButton text={"Выбрать дату"} onPress={showDatepicker} />
 							<TextInput
 								style={styles.modalInput}
 								onChangeText={setIndicatorItemValue}
@@ -156,6 +171,10 @@ const styles = StyleSheet.create({
 		gap: 15,
 		alignItems: "center",
 		justifyContent: "center",
+	},
+	modalDate: {
+		width: "100%",
+		fontSize: 18,
 	},
 	modalInput: {
 		width: 250,
