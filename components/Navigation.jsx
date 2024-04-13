@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { StatusBar } from "react-native";
 import { Colors, NavEnum } from "../const";
 import { Home } from "../pages/Home";
 import { Indicator } from "../pages/Indicator";
@@ -17,6 +18,7 @@ export const Navigation = () => {
 					<Stack.Screen name={NavEnum.Chart} component={ChartScreen} />
 				</Stack.Group>
 			</Stack.Navigator>
+			<StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
 		</NavigationContainer>
 	);
 };

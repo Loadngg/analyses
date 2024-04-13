@@ -5,5 +5,5 @@ An application built on `React Native (Expo)` to visualize analyses in the form 
 ## Run
 
 ```bash
-npm run start
+npx expo start --tunnel
 ```

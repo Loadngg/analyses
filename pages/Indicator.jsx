@@ -53,7 +53,7 @@ export const Indicator = ({ route, navigation }) => {
 
 	const addIndicatorItem = () => {
 		if (indicatorItemValue.length === 0) return Alert.alert("Ошибка", "Вы не ввели значение");
-		const regex = /^\d+(?:\.\d+)?$/;
+		const regex = /^\d+([.,]\d{1})?$/;
 		if (!regex.test(indicatorItemValue))
 			return Alert.alert(
 				"Ошибка",
