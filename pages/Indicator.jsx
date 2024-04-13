@@ -31,17 +31,17 @@ export const Indicator = ({ route, navigation }) => {
 	useEffect(() => {
 		navigation.setOptions({
 			title,
-			headerRight: () => (
-				<IconButton
-					icon={<ChartIcon />}
-					onPress={() =>
-						navigation.navigate(NavEnum.Chart, {
-							data: data.filter((value) => value.title === title),
-							title: title,
-						})
-					}
-				/>
-			),
+			// headerRight: () => (
+			// 	<IconButton
+			// 		icon={<ChartIcon />}
+			// 		onPress={() =>
+			// 			navigation.navigate(NavEnum.Chart, {
+			// 				data: data.filter((value) => value.title === title),
+			// 				title: title,
+			// 			})
+			// 		}
+			// 	/>
+			// ),
 		});
 	}, []);
 
@@ -82,7 +82,7 @@ export const Indicator = ({ route, navigation }) => {
 	const handleLongPress = (item) => {
 		Alert.alert(
 			"Удалить",
-			`Вы уверены, что хотите удалить эту запись? ${item.key} ${item.title}`,
+			`Вы уверены, что хотите удалить эту запись? ${item.key} ${item.value}`,
 			[
 				{
 					text: "Отмена",

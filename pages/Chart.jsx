@@ -13,10 +13,11 @@ export const ChartScreen = ({ route, navigation }) => {
 	const [max, setMax] = useState([0]);
 
 	useEffect(() => {
-		const dates = data.map((item) => moment(item.key, "DD/MM/YY HH:mm:ss").format("DD/MM/YY"));
+		const reversed = data.reverse();
+		const dates = reversed.map((item) => moment(item.key, "DD/MM/YY HH:mm:ss").format("DD/MM/YY"));
 		setDates(dates);
 
-		const values = data.map((item) => parseFloat(item.value));
+		const values = reversed.map((item) => parseFloat(item.value));
 		setValues(values);
 
 		const fetchIndicators = async () => {
