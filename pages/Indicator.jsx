@@ -55,7 +55,7 @@ export const Indicator = ({ route, navigation }) => {
 
 	const addIndicatorItem = () => {
 		if (indicatorItemValue.length === 0) return Alert.alert("Ошибка", "Вы не ввели значение");
-		const regex = /^\d+([.,]\d{1})?$/;
+		const regex = /^\d+([.,]\d+)?$/;
 		if (!regex.test(indicatorItemValue))
 			return Alert.alert(
 				"Ошибка",
@@ -63,7 +63,11 @@ export const Indicator = ({ route, navigation }) => {
 			);
 		setIndicatorsItemData([
 			...data,
-			{ title: title, key: moment(date).format("DD/MM/YY HH:mm:ss"), value: indicatorItemValue },
+			{
+				title: title,
+				key: moment(date).format("DD/MM/YY HH:mm:ss"),
+				value: indicatorItemValue.replace(/,/g, "."),
+			},
 		]);
 		hideModal();
 		if (!openModal) return;
@@ -75,10 +79,10 @@ export const Indicator = ({ route, navigation }) => {
 		setIndicatorsItemData(updatedData);
 	};
 
-	const handleLongPress = (key) => {
+	const handleLongPress = (item) => {
 		Alert.alert(
 			"Удалить",
-			`Вы уверены, что хотите удалить эту запись? ${key} ${title}`,
+			`Вы уверены, что хотите удалить эту запись? ${item.key} ${item.title}`,
 			[
 				{
 					text: "Отмена",
@@ -87,7 +91,7 @@ export const Indicator = ({ route, navigation }) => {
 				{
 					text: "Удалить",
 					style: "destructive",
-					onPress: () => deleteIndicatorItem(key),
+					onPress: () => deleteIndicatorItem(item.key),
 				},
 			],
 			{ cancelable: true }
@@ -143,7 +147,7 @@ export const Indicator = ({ route, navigation }) => {
 					data={data.filter((value) => value.title === title)}
 					renderItem={({ item }) => (
 						<IndicatorItem
-							onLongPress={() => handleLongPress(item.key)}
+							onLongPress={() => handleLongPress(item)}
 							date={moment(item.key, "DD/MM/YY HH:mm:ss").format("DD/MM/YY")}
 							value={item.value + " " + unit}
 						/>

@@ -71,13 +71,16 @@ export const Home = ({ navigation }) => {
 		if (indicatorTitle.length === 0) return Alert.alert("Ошибка", "Вы не ввели название категории");
 		const existingObject = data.find((obj) => obj.key === indicatorTitle);
 		if (existingObject) return Alert.alert("Ошибка", "Такая категория уже существует");
-		const regex = /^\d+([.,]\d{1})?$/;
+		const regex = /^\d+([.,]\d+)?$/;
 		if (!regex.test(min) || !regex.test(max))
 			return Alert.alert(
 				"Ошибка",
 				"Мин. и Макс. могут содержать только целые значения, либо должны быть цифры до запятой и после"
 			);
-		setIndicatorsData([...data, { key: indicatorTitle, unit: unit, min: min, max: max }]);
+		setIndicatorsData([
+			...data,
+			{ key: indicatorTitle, unit: unit, min: min.replace(/,/g, "."), max: max.replace(/,/g, ".") },
+		]);
 		hideModal();
 	};
 
