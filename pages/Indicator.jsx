@@ -129,6 +129,7 @@ export const Indicator = ({ route, navigation }) => {
 					data={data.filter(value => value.title === title)}
 					renderItem={({ item }) => (
 						<IndicatorItem
+							key={item.key}
 							onLongPress={() => handleLongPress(item)}
 							date={moment(item.key, 'DD/MM/YY HH:mm:ss').format('DD/MM/YY')}
 							value={item.value + ' ' + unit}
